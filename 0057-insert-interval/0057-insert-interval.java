@@ -1,52 +1,20 @@
 class Solution {
     public int[][] insert(int[][] intervals, int[] newInterval) {
-        // If the intervals vector is empty, return a vector containing the newInterval
-        if (intervals.length == 0) {
-            return new int[][] { newInterval };
-        }
-
-        int n = intervals.length;
-        int target = newInterval[0];
-        int left = 0, right = n - 1;
-
-        // Binary search to find the position to insert newInterval
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            if (intervals[mid][0] < target) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
-            }
-        }
-
-        // Insert newInterval at the found position
+        int n = intervals.length,i=0;
         List<int[]> result = new ArrayList<>();
-        for (int i = 0; i < left; i++) {
-            result.add(intervals[i]);
+        //1
+        while(i<n && intervals[i][1]<newInterval[0]){ result.add(intervals[i]);i++;}
+        //2
+        while(i<n && newInterval[1] >=intervals[i][0]){
+            newInterval[0] = Math.min(newInterval[0],intervals[i][0]);
+            newInterval[1] = Math.max(newInterval[1],intervals[i][1]);
+            i++;
         }
         result.add(newInterval);
-        for (int i = left; i < n; i++) {
-            result.add(intervals[i]);
-        }
+        //3
+        while(i<n){ result.add(intervals[i]);i++;}
+        return result.toArray(new int[result.size()][]);
 
-        // Merge overlapping intervals
-        List<int[]> merged = new ArrayList<>();
-        for (int[] interval : result) {
-            // If res is empty or there is no overlap, add the interval to the result
-            if (
-                merged.isEmpty() ||
-                merged.get(merged.size() - 1)[1] < interval[0]
-            ) {
-                merged.add(interval);
-                // If there is an overlap, merge the intervals by updating the end of the last interval in res
-            } else {
-                merged.get(merged.size() - 1)[1] = Math.max(
-                    merged.get(merged.size() - 1)[1],
-                    interval[1]
-                );
-            }
-        }
-
-        return merged.toArray(new int[0][]);
+    
     }
 }
