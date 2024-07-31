@@ -1,2 +1,73 @@
 Given an array of non-negative integers, and a value sum, determine if there is a subset of the given set with sum equal to given sum. 
 
+recursion:
+class Solution{
+
+    static Boolean f(int[] arr,int target,int i){
+        if(target == 0)return true;
+        if(i==0) return (arr[i]==target);
+        boolean nottake = f(arr,target,i-1);
+        boolean take = false;
+        if(arr[i] <= target) take = f(arr,target-arr[i],i-1);
+        return take || nottake ;
+    }
+    static Boolean isSubsetSum(int N, int arr[], int sum){
+        // code here
+        return f(arr,sum,N-1);
+    }
+}
+
+memoization:
+class Solution{
+
+    static Boolean f(int[] arr,int target,int i,int dp[][]){
+        if(target == 0)return true;
+        if(i==0) return (arr[i]==target);
+        if(dp[i][target] != -1) return dp[i][target] == 0 ? false : true;
+        boolean nottake = f(arr,target,i-1,dp);
+        boolean take = false;
+        if(arr[i] <= target) take = f(arr,target-arr[i],i-1,dp);
+          dp[i][target] = nottake || take ? 1 : 0;
+        return nottake || take;
+    }
+    static Boolean isSubsetSum(int N, int arr[], int sum){
+        int dp[][] = new int[N][sum+1];
+        for(int row[] : dp) Arrays.fill(row,-1);
+        return f(arr,sum,N-1,dp);
+    }
+}
+
+tablu:
+static Boolean isSubsetSum(int n, int arr[], int k){
+        // code here
+       boolean dp[][] = new boolean[n][k + 1];
+        
+        // Initialize the first row of the DP table
+        for (int i = 0; i < n; i++) {
+            dp[i][0] = true;
+        }
+
+        // Initialize the first column of the DP table
+        if (arr[0] <= k) {
+            dp[0][arr[0]] = true;
+        }
+
+        // Fill in the DP table using bottom-up approach
+        for (int ind = 1; ind < n; ind++) {
+            for (int target = 1; target <= k; target++) {
+                // Calculate if the current target can be achieved without taking the current element
+                boolean notTaken = dp[ind - 1][target];
+                
+                // Calculate if the current target can be achieved by taking the current element
+                boolean taken = false;
+                if (arr[ind] <= target) {
+                    taken = dp[ind - 1][target - arr[ind]];
+                }
+                
+                // Store the result in the DP table
+                dp[ind][target] = notTaken || taken;
+            }
+        }
+
+        // The final result is stored in the bottom-right cell of the DP table
+        return dp[n - 1][k];
