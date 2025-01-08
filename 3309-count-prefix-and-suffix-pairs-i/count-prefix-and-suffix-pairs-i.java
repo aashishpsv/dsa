@@ -1,95 +1,55 @@
-class Node {
-
-    private Node[] links = new Node[26];
-
-    // Check if the character is present in the current node
-    public boolean contains(char c) {
-        return links[c - 'a'] != null;
-    }
-
-    // Insert a new node for the character
-    public void put(char c, Node node) {
-        links[c - 'a'] = node;
-    }
-
-    // Get the next node for the character
-    public Node next(char c) {
-        return links[c - 'a'];
-    }
-}
-
-class Trie {
-
-    private Node root;
-
-    public Trie() {
-        root = new Node();
-    }
-
-    // Insert a word into the Trie
-    public void insert(String word) {
-        Node node = root;
-        for (char c : word.toCharArray()) {
-            if (!node.contains(c)) {
-                node.put(c, new Node());
-            }
-            node = node.next(c);
-        }
-    }
-
-    // Check if the Trie contains a given prefix
-    public boolean startsWith(String prefix) {
-        Node node = root;
-        for (char c : prefix.toCharArray()) {
-            if (!node.contains(c)) {
-                return false;
-            }
-            node = node.next(c);
-        }
-        return true;
-    }
-}
-
 class Solution {
+     
+    // private boolean checkprefix(String str1, String str2) {
+    //     return str2.startsWith(str1);
+    // }
+ // private boolean checksuffix(String str1, String str2) {
+    //     return str2.endsWith(str1);
+    // }
 
     public int countPrefixSuffixPairs(String[] words) {
-        int n = words.length;
-        int count = 0;
+        int ans = 0;
 
-        // Step 1: Iterate over each word
-        for (int i = 0; i < n; i++) {
-            Trie prefixTrie = new Trie();
-            Trie suffixTrie = new Trie();
+        for (int i=0;i<words.length-1;i++){
+            String cur = words[i];
+            for(int j=i+1;j<words.length;j++){
+                String cur1 = words[j];
+                //version1 // if(checkprefix(cur,cur1)){ if(checksuffix(cur,cur1)) ans++; }
+                
+               //version 2// if(cur1.startsWith(cur) && cur1.endsWith(cur)) ans++;
 
-            // Step 2: Insert the current word into the prefix Trie
-            prefixTrie.insert(words[i]);
+               if(checkprefix(cur,cur1)){ if(checksuffix(cur,cur1)) ans++; }
+              
 
-            // Step 3: Reverse the word and insert it into the suffix Trie
-            String revWord = new StringBuilder(words[i]).reverse().toString();
-            suffixTrie.insert(revWord);
-
-            // Step 4: Iterate over all previous words
-            for (int j = 0; j < i; j++) {
-                // Step 5: Skip words[j] if it is longer than words[i]
-                if (words[j].length() > words[i].length()) continue;
-
-                // Step 6: Extract the prefix and reversed prefix of words[j]
-                String prefixWord = words[j];
-                String revPrefixWord = new StringBuilder(prefixWord)
-                    .reverse()
-                    .toString();
-
-                // Step 7: Check if words[j] is both a prefix and suffix of words[i]
-                if (
-                    prefixTrie.startsWith(prefixWord) &&
-                    suffixTrie.startsWith(revPrefixWord)
-                ) {
-                    count++;
-                }
             }
         }
+        return ans;
+    }
 
-        // Step 8: Return the total count of valid pairs
-        return count;
+    private boolean checkprefix(String str1, String str2) {
+        if (str1.length() > str2.length()) {
+            return false; 
+        }
+        for (int i = 0; i < str1.length(); i++) {
+            if (str1.charAt(i) != str2.charAt(i)) {
+                return false; 
+            }
+        }
+        return true; 
+    }
+
+    private boolean checksuffix(String str1, String str2) {
+       
+        if (str1.length() > str2.length()) {
+            return false;
+        }
+        int str1Len = str1.length();
+        int str2Len = str2.length();
+        for (int i = 0; i < str1Len; i++) {
+            if (str1.charAt(str1Len - 1 - i) != str2.charAt(str2Len - 1 - i)) {
+                return false; 
+            }
+        }
+        return true; 
     }
 }
