@@ -1,0 +1,29 @@
+class Solution {
+    public int candy(int[] ratings) {
+        int n = ratings.length;
+        int[] arr = new int[n];
+        Arrays.fill(arr, 1);
+        
+        // Forward pass to handle increasing sequences
+        for (int i = 1; i < n; i++) {
+            if (ratings[i] > ratings[i - 1]) {
+                arr[i] = arr[i - 1] + 1;
+            }
+        }
+
+        // Backward pass to handle decreasing sequences
+        for (int i = n - 2; i >= 0; i--) {
+            if (ratings[i] > ratings[i + 1]) {
+                arr[i] = Math.max(arr[i], arr[i + 1] + 1);
+            }
+        }
+
+        // Sum up the candies
+        int count = 0;
+        for (int a : arr) {
+            count += a;
+        }
+        return count;
+        
+    }
+}
